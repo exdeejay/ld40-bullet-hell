@@ -37,6 +37,8 @@ public class Game extends ApplicationAdapter {
 		player.init();
 		crosshairs.init();
 		Bullet.init();
+		Zombie.init();
+		zombies.add(new Zombie(10, 10));
 	}
 
 	@Override
@@ -94,5 +96,9 @@ public class Game extends ApplicationAdapter {
 
 	public List<Bullet> getBullets() {
 		return bullets;
+	}
+
+	public List<Zombie> getZombies() {
+		return zombies;
 	}
 }
