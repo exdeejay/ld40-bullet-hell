@@ -11,8 +11,8 @@ public class DesktopLauncher {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.title = "LD40 Lava Lamp";
 		// config.addIcon();
-		config.width = CameraController.CAMERA_WIDTH * 2;
-		config.height = CameraController.CAMERA_HEIGHT * 2;
+		config.width = (int) (CameraController.CAMERA_WIDTH * 1.5);
+		config.height = (int) (CameraController.CAMERA_HEIGHT * 1.5);
 		// config.fullscreen = true;
 		new LwjglApplication(new Game(), config);
 	}

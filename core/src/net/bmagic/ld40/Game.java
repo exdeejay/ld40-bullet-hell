@@ -16,6 +16,7 @@ public class Game extends ApplicationAdapter {
 
 	private SpriteBatch batch;
 	private CameraController cameraController;
+	private ZombieSpawner zombieSpawner;
 	private List<Bullet> bullets;
 	private List<Zombie> zombies;
 	private Player player;
@@ -25,6 +26,7 @@ public class Game extends ApplicationAdapter {
 		instance = this;
 
 		cameraController = new CameraController();
+		zombieSpawner = new ZombieSpawner();
 		bullets = new ArrayList<Bullet>();
 		zombies = new ArrayList<Zombie>();
 		player = new Player();
@@ -35,12 +37,11 @@ public class Game extends ApplicationAdapter {
 	public void create() {
 		batch = new SpriteBatch();
 		cameraController.init();
+		zombieSpawner.init();
 		Bullet.init();
 		Zombie.init();
 		player.init();
 		crosshairs.init();
-
-		zombies.add(new Zombie(10, 10));
 
 		state = GameState.RUNNING;
 	}
@@ -60,6 +61,7 @@ public class Game extends ApplicationAdapter {
 				zombies.get(i).update();
 			player.update();
 			crosshairs.update();
+			zombieSpawner.update();
 			// End game logic
 			cameraController.update();
 
