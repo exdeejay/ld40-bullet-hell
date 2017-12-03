@@ -35,23 +35,23 @@ public class ZombieSpawner {
 
             switch (side) {
                 case 0:
-                    x = (int) backgroundRect.getWidth() - SPAWN_SPACE_BUFFER;
+                    x = (int) backgroundRect.getWidth() + SPAWN_SPACE_BUFFER;
                     y = random.nextInt((int) backgroundRect.getHeight());
                     break;
                 
                 case 1:
                     x = random.nextInt((int) backgroundRect.getWidth());
-                    y = (int) backgroundRect.getHeight() - SPAWN_SPACE_BUFFER;
+                    y = (int) backgroundRect.getHeight() + SPAWN_SPACE_BUFFER;
                     break;
 
                 case 2:
-                    x = SPAWN_SPACE_BUFFER;
+                    x = -SPAWN_SPACE_BUFFER;
                     y = random.nextInt((int) backgroundRect.getHeight());
                     break;
 
                 case 3:
                     x = random.nextInt((int) backgroundRect.getWidth());
-                    y = SPAWN_SPACE_BUFFER;
+                    y = -SPAWN_SPACE_BUFFER;
                     break;
 
                 default:

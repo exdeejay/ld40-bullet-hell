@@ -10,9 +10,9 @@ import com.badlogic.gdx.math.Vector3;
 public class CameraController {
 
     // Tweakable constants
-    public static final int CAMERA_WIDTH = 600;
-    public static final int CAMERA_HEIGHT = 360;
-    public static final int LIMIT = 40;
+    public static final int CAMERA_WIDTH = 800;
+    public static final int CAMERA_HEIGHT = 640;
+    public static final int LIMIT = 200;
     // End tweakable constants
 
     // Cached instances
