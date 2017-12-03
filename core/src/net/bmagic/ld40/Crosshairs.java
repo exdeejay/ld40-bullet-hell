@@ -8,17 +8,21 @@ import com.badlogic.gdx.math.Vector3;
 
 public class Crosshairs {
 
+    // Cached instances
     private Game game;
+    private Texture texture;
     private OrthographicCamera camera;
+
+    // Private properties
     private float x;
     private float y;
-    private Texture texture;
     private Vector3 screenCoords;
 
     public void init() {
         game = Game.getInstance();
-        camera = game.getCameraController().getCamera();
         texture = new Texture(Gdx.files.internal("crosshairs.png"));
+        camera = game.getCameraController().getCamera();
+
         screenCoords = new Vector3();
     }
 

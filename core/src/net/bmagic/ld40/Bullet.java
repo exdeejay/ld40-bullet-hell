@@ -12,10 +12,15 @@ public class Bullet {
     public static final int DESPAWN_BUFFER = 20;
     // End tweakable constants
 
+    // Cached instances
+    private static Game game;
+    private static Texture texture;
+    private static Rectangle backgroundRect;
+
+    // Private properties
     private float x;
     private float y;
     private float rotation;
-    private static Texture texture;
 
     public Bullet(float x, float y, float rotation) {
         this.x = x;
@@ -24,7 +29,9 @@ public class Bullet {
     }
 
     public static void init() {
+        game = Game.getInstance();
         texture = new Texture(Gdx.files.internal("bullet.png"));
+        backgroundRect = game.getCameraController().getRectangle();
     }
 
     public void update() {
@@ -32,12 +39,11 @@ public class Bullet {
         x += dPos * Math.cos(rotation);
         y += dPos * Math.sin(rotation);
 
-        Game game = Game.getInstance();
-        Rectangle backRect = game.getCameraController().getRectangle();
+        
         if (x + DESPAWN_BUFFER < 0
-                || x - DESPAWN_BUFFER > backRect.getWidth()
+                || x - DESPAWN_BUFFER > backgroundRect.getWidth()
                 || y + DESPAWN_BUFFER < 0
-                || y - DESPAWN_BUFFER > backRect.getHeight())
+                || y - DESPAWN_BUFFER > backgroundRect.getHeight())
             game.getBullets().remove(this);
     }
 

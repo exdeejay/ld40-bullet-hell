@@ -2,7 +2,6 @@ package net.bmagic.ld40;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
@@ -13,15 +12,17 @@ public class Player {
     public static final int SPEED = 200;
     // End tweakable constants
 
+    // Cached instances
     private Game game;
-    private OrthographicCamera camera;
-    private Rectangle rect;
     private Texture texture;
+
+    // Private properties
+    private Rectangle rect;
 
     public void init() {
         game = Game.getInstance();
-        camera = game.getCameraController().getCamera();
         texture = new Texture(Gdx.files.internal("player.png"));
+        
         rect = new Rectangle(
             game.getCameraController().getRectangle().getWidth()/2 - texture.getWidth()/2,
             game.getCameraController().getRectangle().getHeight()/2 - texture.getHeight()/2,

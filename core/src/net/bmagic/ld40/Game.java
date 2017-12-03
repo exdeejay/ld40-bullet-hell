@@ -1,7 +1,7 @@
 package net.bmagic.ld40;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
@@ -18,6 +18,7 @@ public class Game extends ApplicationAdapter {
 	private Player player;
 	private Crosshairs crosshairs;
 	private List<Bullet> bullets;
+	private List<Zombie> zombies;
 
 	public Game() {
 		instance = this;
@@ -26,6 +27,7 @@ public class Game extends ApplicationAdapter {
 		player = new Player();
 		crosshairs = new Crosshairs();
 		bullets = new ArrayList<Bullet>();
+		zombies = new ArrayList<Zombie>();
 	}
 	
 	@Override
@@ -47,6 +49,8 @@ public class Game extends ApplicationAdapter {
 		crosshairs.update();
 		for (int i = 0; i < bullets.size(); i++)
 			bullets.get(i).update();
+		for (int i = 0; i < zombies.size(); i++)
+			zombies.get(i).update();
 		// End game logic
 		cameraController.update();
 
@@ -61,6 +65,8 @@ public class Game extends ApplicationAdapter {
 		crosshairs.draw(batch);
 		for (Bullet b : bullets)
 			b.draw(batch);
+		for (Zombie z : zombies)
+			z.draw(batch);
 		// End sprite drawing
 		batch.end();
 	}

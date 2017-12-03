@@ -15,29 +15,29 @@ public class CameraController {
     public static final int LIMIT = 40;
     // End tweakable constants
 
+    // Cached instances
     private Game game;
     private Player player;
+    private Texture texture;
     private OrthographicCamera camera;
 
+    // Private properties
     private Rectangle rect;
-    private Texture texture;
     private Vector3 playerCoords;
 
     public void init() {
         game = Game.getInstance();
-
         texture = new Texture(Gdx.files.internal("testgrid.png"));
+        camera = new OrthographicCamera();
+        camera.setToOrtho(false, CAMERA_WIDTH, CAMERA_HEIGHT);
+        camera.position.set(texture.getWidth()/2, texture.getHeight()/2, 0);
+        player = game.getPlayer();
+
         rect = new Rectangle(
             0,
             0,
             texture.getWidth(),
             texture.getHeight());
-
-        camera = new OrthographicCamera();
-        camera.setToOrtho(false, CAMERA_WIDTH, CAMERA_HEIGHT);
-        camera.position.set(texture.getWidth()/2, texture.getHeight()/2, 0);
-
-        player = game.getPlayer();
         playerCoords = new Vector3();
     }
 
