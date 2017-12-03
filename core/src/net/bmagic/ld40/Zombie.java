@@ -62,10 +62,11 @@ public class Zombie {
                 game.getBullets().remove(i);
                 die();
             }
+
+        stateTime += Gdx.graphics.getDeltaTime();            
     }
 
     public void draw(SpriteBatch batch) {
-        stateTime += Gdx.graphics.getDeltaTime();
         TextureRegion frame = anim.getKeyFrame(stateTime, true);
         batch.draw(
             frame,

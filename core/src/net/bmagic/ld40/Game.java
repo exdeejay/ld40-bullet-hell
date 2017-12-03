@@ -28,8 +28,8 @@ public class Game extends ApplicationAdapter {
 		cameraController = new CameraController();
 		zombieSpawner = new ZombieSpawner();
 		bullets = new ArrayList<Bullet>();
-		zombies = new ArrayList<Zombie>();
 		player = new Player();
+		zombies = new ArrayList<Zombie>();
 		crosshairs = new Crosshairs();
 	}
 
@@ -39,8 +39,8 @@ public class Game extends ApplicationAdapter {
 		cameraController.init();
 		zombieSpawner.init();
 		Bullet.init();
-		Zombie.init();
 		player.init();
+		Zombie.init();
 		crosshairs.init();
 
 		state = GameState.RUNNING;
@@ -57,9 +57,9 @@ public class Game extends ApplicationAdapter {
 		case RUNNING:
 			for (int i = 0; i < bullets.size(); i++)
 				bullets.get(i).update();
+			player.update();
 			for (int i = 0; i < zombies.size(); i++)
 				zombies.get(i).update();
-			player.update();
 			crosshairs.update();
 			zombieSpawner.update();
 			// End game logic
@@ -73,9 +73,9 @@ public class Game extends ApplicationAdapter {
 			cameraController.draw(batch);
 			for (int i = 0; i < bullets.size(); i++)
 				bullets.get(i).draw(batch);
+			player.draw(batch);
 			for (int i = 0; i < zombies.size(); i++)
 				zombies.get(i).draw(batch);
-			player.draw(batch);
 			crosshairs.draw(batch);
 			// End sprite drawing
 			batch.end();

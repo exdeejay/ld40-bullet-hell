@@ -3,13 +3,17 @@ package net.bmagic.ld40;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 
 public class CameraController {
 
     // Tweakable constants
+    public static final int WORLD_WIDTH = 1024;
+    public static final int WORLD_HEIGHT = 1024;    
     public static final int CAMERA_WIDTH = 800;
     public static final int CAMERA_HEIGHT = 640;
     public static final int LIMIT = 200;
@@ -19,6 +23,7 @@ public class CameraController {
     private Game game;
     private Player player;
     private Texture texture;
+    private TextureRegion tile;
     private OrthographicCamera camera;
 
     // Private properties
@@ -27,17 +32,20 @@ public class CameraController {
 
     public void init() {
         game = Game.getInstance();
-        texture = new Texture(Gdx.files.internal("testgrid.png"));
-        camera = new OrthographicCamera();
-        camera.setToOrtho(false, CAMERA_WIDTH, CAMERA_HEIGHT);
-        camera.position.set(texture.getWidth()/2, texture.getHeight()/2, 0);
-        player = game.getPlayer();
-
+        texture = new Texture(Gdx.files.internal("background.png"));
+        texture.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
         rect = new Rectangle(
             0,
             0,
-            texture.getWidth(),
-            texture.getHeight());
+            WORLD_WIDTH,
+            WORLD_HEIGHT);
+        tile = new TextureRegion(texture, WORLD_WIDTH, WORLD_HEIGHT);
+            
+        camera = new OrthographicCamera();
+        camera.setToOrtho(false, CAMERA_WIDTH, CAMERA_HEIGHT);
+        camera.position.set(rect.getWidth()/2, rect.getHeight()/2, 0);
+
+        player = game.getPlayer();
         playerCoords = new Vector3();
     }
 
@@ -72,7 +80,7 @@ public class CameraController {
     }
 
     public void draw(SpriteBatch batch) {
-        batch.draw(texture, rect.getX(), rect.getY());
+        batch.draw(tile, rect.x, rect.y);
     }
 
     public void dispose() {
