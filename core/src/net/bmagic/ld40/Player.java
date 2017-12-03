@@ -34,6 +34,7 @@ public class Player {
         float d = SPEED * Gdx.graphics.getDeltaTime();
         Rectangle backRect = game.getCameraController().getRectangle();
 
+        // Key input
         if (Gdx.input.isKeyPressed(Keys.W))
             rect.y += d;
         if (Gdx.input.isKeyPressed(Keys.A))
@@ -43,6 +44,7 @@ public class Player {
         if (Gdx.input.isKeyPressed(Keys.D))
             rect.x += d;
 
+        // Limits movement to background texture
         if (rect.x < 0)
             rect.x = 0;
         if (rect.x + rect.width > backRect.getWidth())
@@ -51,6 +53,11 @@ public class Player {
             rect.y = 0;
         if (rect.y + rect.height > backRect.getHeight())
             rect.y = backRect.getHeight() - rect.height;
+
+        // Detects collision with zombies
+        for (Zombie z : game.getZombies())
+            if (rect.overlaps(z.getRectangle()))
+                die();
     }
 
     public void draw(SpriteBatch batch) {
@@ -71,6 +78,11 @@ public class Player {
                 rect.x + rect.width/2,
                 rect.y + rect.height/2,
                 angle));
+    }
+
+    public void die() {
+        Gdx.app.log("GAMESTATE", "You lose!");
+        game.setState(GameState.GAMEOVER);
     }
 
 }

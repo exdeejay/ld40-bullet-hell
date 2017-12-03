@@ -1,5 +1,7 @@
 package net.bmagic.ld40;
 
+import java.util.List;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -41,14 +43,30 @@ public class Zombie {
 
         rect.x += path.x;
         rect.y += path.y;
+
+        // Detect collision with bullet
+        List<Bullet> bullets = game.getBullets();
+        for (int i = 0; i < bullets.size(); i++)
+            if (rect.contains(bullets.get(i).getX(), bullets.get(i).getY())) {
+                game.getBullets().remove(i);
+                die();
+            }
     }
 
     public void draw(SpriteBatch batch) {
         batch.draw(texture, rect.x, rect.y);
     }
 
-    public void dispose() {
+    public static void dispose() {
         texture.dispose();
+    }
+
+    public Rectangle getRectangle() {
+        return rect;
+    }
+
+    public void die() {
+        game.getZombies().remove(this);
     }
 
 }
