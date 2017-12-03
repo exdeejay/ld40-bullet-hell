@@ -1,5 +1,8 @@
 package net.bmagic.ld40;
 
+import java.util.List;
+import java.util.ArrayList;
+
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
@@ -14,6 +17,7 @@ public class Game extends ApplicationAdapter {
 	private CameraController cameraController;
 	private Player player;
 	private Crosshairs crosshairs;
+	private List<Bullet> bullets;
 
 	public Game() {
 		instance = this;
@@ -21,14 +25,16 @@ public class Game extends ApplicationAdapter {
 		cameraController = new CameraController();
 		player = new Player();
 		crosshairs = new Crosshairs();
+		bullets = new ArrayList<Bullet>();
 	}
 	
 	@Override
 	public void create() {
 		batch = new SpriteBatch();
-		cameraController.create();
-		player.create();
-		crosshairs.create();
+		cameraController.init();
+		player.init();
+		crosshairs.init();
+		Bullet.init();
 	}
 
 	@Override
@@ -39,6 +45,8 @@ public class Game extends ApplicationAdapter {
 		}
 		player.update();
 		crosshairs.update();
+		for (int i = 0; i < bullets.size(); i++)
+			bullets.get(i).update();
 		// End game logic
 		cameraController.update();
 
@@ -51,6 +59,8 @@ public class Game extends ApplicationAdapter {
 		cameraController.draw(batch);
 		player.draw(batch);
 		crosshairs.draw(batch);
+		for (Bullet b : bullets)
+			b.draw(batch);
 		// End sprite drawing
 		batch.end();
 	}
@@ -61,6 +71,7 @@ public class Game extends ApplicationAdapter {
 		cameraController.dispose();
 		player.dispose();
 		crosshairs.dispose();
+		Bullet.dispose();
 	}
 
 	public static Game getInstance() {
@@ -73,5 +84,9 @@ public class Game extends ApplicationAdapter {
 
 	public Player getPlayer() {
 		return player;
+	}
+
+	public List<Bullet> getBullets() {
+		return bullets;
 	}
 }

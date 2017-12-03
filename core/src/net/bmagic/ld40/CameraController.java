@@ -23,17 +23,19 @@ public class CameraController {
     private Texture texture;
     private Vector3 playerCoords;
 
-    public void create() {
+    public void init() {
         game = Game.getInstance();
-        camera = new OrthographicCamera();
-        camera.setToOrtho(false, CAMERA_WIDTH, CAMERA_HEIGHT);
 
         texture = new Texture(Gdx.files.internal("testgrid.png"));
         rect = new Rectangle(
-            camera.viewportWidth/2 - texture.getWidth()/2,
-            camera.viewportHeight/2 - texture.getHeight()/2,
+            0,
+            0,
             texture.getWidth(),
             texture.getHeight());
+
+        camera = new OrthographicCamera();
+        camera.setToOrtho(false, CAMERA_WIDTH, CAMERA_HEIGHT);
+        camera.position.set(texture.getWidth()/2, texture.getHeight()/2, 0);
 
         player = game.getPlayer();
         playerCoords = new Vector3();
@@ -46,14 +48,24 @@ public class CameraController {
             0);
         Vector3 projected = projectToCamera(playerCoords);
         
+        float d = Player.SPEED * Gdx.graphics.getDeltaTime();
         if (projected.x > CAMERA_WIDTH - LIMIT)
-            camera.position.x += Player.SPEED * Gdx.graphics.getDeltaTime();
+            camera.position.x += d;
         if (projected.x < LIMIT)
-            camera.position.x -= Player.SPEED * Gdx.graphics.getDeltaTime();
+            camera.position.x -= d;
         if (projected.y > CAMERA_HEIGHT - LIMIT)
-            camera.position.y += Player.SPEED * Gdx.graphics.getDeltaTime();
+            camera.position.y += d;
         if (projected.y < LIMIT)
-            camera.position.y -= Player.SPEED * Gdx.graphics.getDeltaTime();
+            camera.position.y -= d;
+
+        if (camera.position.x - CAMERA_WIDTH/2 < 0)
+            camera.position.x = CAMERA_WIDTH/2;
+        if (camera.position.x + CAMERA_WIDTH/2 > rect.width)
+            camera.position.x = rect.width - CAMERA_WIDTH/2;
+        if (camera.position.y - CAMERA_HEIGHT/2 < 0)
+            camera.position.y = CAMERA_HEIGHT/2;
+        if (camera.position.y + CAMERA_HEIGHT/2 > rect.height)
+            camera.position.y = rect.height - CAMERA_HEIGHT/2;
 
         // Don't forget to update the camera
         camera.update();
@@ -69,6 +81,10 @@ public class CameraController {
 
     public OrthographicCamera getCamera() {
         return camera;
+    }
+
+    public Rectangle getRectangle() {
+        return rect;
     }
 
     public Vector3 projectToCamera(Vector3 worldCoords) {

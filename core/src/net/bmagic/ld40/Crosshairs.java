@@ -15,7 +15,7 @@ public class Crosshairs {
     private Texture texture;
     private Vector3 screenCoords;
 
-    public void create() {
+    public void init() {
         game = Game.getInstance();
         camera = game.getCameraController().getCamera();
         texture = new Texture(Gdx.files.internal("crosshairs.png"));
@@ -30,6 +30,13 @@ public class Crosshairs {
         Vector3 worldCoords = camera.unproject(screenCoords);
         x = worldCoords.x;
         y = worldCoords.y;
+
+        if (Gdx.input.justTouched()) {
+            float rotation = (float) Math.atan2(
+                y - game.getPlayer().getRectangle().getY(),
+                x - game.getPlayer().getRectangle().getX());
+            game.getPlayer().shoot(rotation);
+        }
     }
 
     public void draw(SpriteBatch batch) {
