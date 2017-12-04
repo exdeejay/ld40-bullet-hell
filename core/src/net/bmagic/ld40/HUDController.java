@@ -2,7 +2,6 @@ package net.bmagic.ld40;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
-import com.badlogic.gdx.graphics.TextureData.TextureDataType;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
@@ -14,18 +13,15 @@ public class HUDController {
     // End tweakable constants
 
     // Cached instances
+    private Game game;
     private BitmapFont font;
 
-    // Private properties
-    private int score;
-
     public void init() {
+        game = Game.getInstance();
         font = new BitmapFont(
             Gdx.files.internal("font.fnt"),
             Gdx.files.internal("font.png"),
             false);
-
-        score = 0;
     }
 
     public void update() {
@@ -36,19 +32,11 @@ public class HUDController {
         font.getRegion().getTexture()
             .setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
         font.getData().setScale(4);
-        font.draw(batch, "Score:" + score, 10, Gdx.graphics.getHeight() - 10);
+        font.draw(batch, "Bullets:" + game.getPlayer().getBullets(), 10, Gdx.graphics.getHeight() - 10);
     }
 
     public void dispose() {
         font.dispose();
-    }
-
-    public int getScore() {
-        return score;
-    }
-
-    public void setScore(int score) {
-        this.score = score;
     }
     
 }

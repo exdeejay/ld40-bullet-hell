@@ -8,7 +8,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Matrix4;
 
 public class Game extends ApplicationAdapter {
 
@@ -20,6 +19,7 @@ public class Game extends ApplicationAdapter {
 	private CameraController cameraController;
 	private HUDController hudController;
 	private ZombieSpawner zombieSpawner;
+	private List<Ammo> ammo;
 	private List<Bullet> bullets;
 	private List<Zombie> zombies;
 	private Player player;
@@ -31,6 +31,7 @@ public class Game extends ApplicationAdapter {
 		cameraController = new CameraController();
 		hudController = new HUDController();
 		zombieSpawner = new ZombieSpawner();
+		ammo = new ArrayList<Ammo>();
 		bullets = new ArrayList<Bullet>();
 		player = new Player();
 		zombies = new ArrayList<Zombie>();
@@ -44,6 +45,7 @@ public class Game extends ApplicationAdapter {
 		cameraController.init();
 		hudController.init();
 		zombieSpawner.init();
+		Ammo.init();
 		Bullet.init();
 		player.init();
 		Zombie.init();
@@ -61,6 +63,8 @@ public class Game extends ApplicationAdapter {
 
 		switch (state) {
 		case RUNNING:
+			for (int i = 0; i < ammo.size(); i++)
+				ammo.get(i).update();
 			for (int i = 0; i < bullets.size(); i++)
 				bullets.get(i).update();
 			player.update();
@@ -78,6 +82,8 @@ public class Game extends ApplicationAdapter {
 			batch.setProjectionMatrix(cameraController.getCamera().combined);
 			// Draw sprites in here
 			cameraController.draw(batch);
+			for (int i = 0; i < ammo.size(); i++)
+				ammo.get(i).draw(batch);
 			for (int i = 0; i < bullets.size(); i++)
 				bullets.get(i).draw(batch);
 			player.draw(batch);
@@ -154,6 +160,10 @@ public class Game extends ApplicationAdapter {
 
 	public Player getPlayer() {
 		return player;
+	}
+
+	public List<Ammo> getAmmo() {
+		return ammo;
 	}
 
 	public List<Bullet> getBullets() {

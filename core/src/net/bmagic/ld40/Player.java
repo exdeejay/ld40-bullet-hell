@@ -1,5 +1,7 @@
 package net.bmagic.ld40;
 
+import java.util.List;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Texture;
@@ -9,7 +11,7 @@ import com.badlogic.gdx.math.Rectangle;
 public class Player {
     
     // Tweakable constants
-    public static final int SPEED = 200;
+    public static final int BASE_SPEED = 200;
     // End tweakable constants
 
     // Cached instances
@@ -18,6 +20,7 @@ public class Player {
 
     // Private properties
     private Rectangle rect;
+    private int bullets;
 
     public void init() {
         game = Game.getInstance();
@@ -28,10 +31,12 @@ public class Player {
             game.getCameraController().getRectangle().getHeight()/2 - texture.getHeight()/2,
             texture.getWidth(),
             texture.getHeight());
+
+        bullets = 6;
     }
 
     public void update() {
-        float d = SPEED * Gdx.graphics.getDeltaTime();
+        float d = BASE_SPEED * Gdx.graphics.getDeltaTime();
         Rectangle backRect = game.getCameraController().getRectangle();
 
         // Key input
@@ -58,6 +63,14 @@ public class Player {
         for (Zombie z : game.getZombies())
             if (rect.overlaps(z.getRectangle()))
                 die();
+
+        // Detects collision with ammo
+        List<Ammo> ammo = game.getAmmo();
+        for (int i = 0; i < ammo.size(); i++)
+            if (rect.overlaps(ammo.get(i).getRectangle())) {
+                bullets += Ammo.CARTRIDGE_SIZE;
+                ammo.remove(i);
+            }
     }
 
     public void draw(SpriteBatch batch) {
@@ -72,12 +85,23 @@ public class Player {
         return rect;
     }
 
+    public int getBullets() {
+        return bullets;
+    }
+
+    public void setBullets(int bullets) {
+        this.bullets = bullets;
+    }
+
     public void shoot(float angle) {
-        game.getBullets().add(
-            new Bullet(
-                rect.x + rect.width/2,
-                rect.y + rect.height/2,
-                angle));
+        if (bullets > 0) {
+            bullets--;
+            game.getBullets().add(
+                new Bullet(
+                    rect.x + rect.width/2,
+                    rect.y + rect.height/2,
+                    angle));
+        }
     }
 
     public void die() {

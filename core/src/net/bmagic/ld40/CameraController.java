@@ -54,7 +54,7 @@ public class CameraController {
             0);
         Vector3 projected = projectToCamera(playerCoords);
         
-        float d = Player.SPEED * Gdx.graphics.getDeltaTime();
+        float d = Player.BASE_SPEED * Gdx.graphics.getDeltaTime();
         if (projected.x > CAMERA_WIDTH - LIMIT)
             camera.position.x += d;
         if (projected.x < LIMIT)
