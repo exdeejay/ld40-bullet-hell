@@ -35,10 +35,8 @@ public class CameraController {
         texture = new Texture(Gdx.files.internal("background.png"));
         texture.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
         rect = new Rectangle(
-            0,
-            0,
-            WORLD_WIDTH,
-            WORLD_HEIGHT);
+            0, 0,
+            WORLD_WIDTH, WORLD_HEIGHT);
         tile = new TextureRegion(texture, WORLD_WIDTH, WORLD_HEIGHT);
             
         camera = new OrthographicCamera();

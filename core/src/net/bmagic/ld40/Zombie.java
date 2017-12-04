@@ -22,6 +22,7 @@ public class Zombie {
 
     // Cached instances
     private static Game game;
+    private static HUDController hud;
     private static Texture texture;
     private static Animation<TextureRegion> anim;
     
@@ -42,6 +43,7 @@ public class Zombie {
 
     public static void init() {
         game = Game.getInstance();
+        hud = game.getHUDController();
         texture = new Texture(Gdx.files.internal("zombie.png"));
         TextureRegion[][] frames = TextureRegion.split(texture, 32, 32);
         anim = new Animation<TextureRegion>(0.25f, frames[0]);
@@ -86,6 +88,7 @@ public class Zombie {
     }
 
     public void die() {
+        hud.setScore(hud.getScore() + 1);
         game.getZombies().remove(this);
     }
 

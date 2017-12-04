@@ -8,6 +8,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Matrix4;
 
 public class Game extends ApplicationAdapter {
 
@@ -15,7 +16,9 @@ public class Game extends ApplicationAdapter {
 	private GameState state;
 
 	private SpriteBatch batch;
+	private SpriteBatch hudBatch;
 	private CameraController cameraController;
+	private HUDController hudController;
 	private ZombieSpawner zombieSpawner;
 	private List<Bullet> bullets;
 	private List<Zombie> zombies;
@@ -26,6 +29,7 @@ public class Game extends ApplicationAdapter {
 		instance = this;
 
 		cameraController = new CameraController();
+		hudController = new HUDController();
 		zombieSpawner = new ZombieSpawner();
 		bullets = new ArrayList<Bullet>();
 		player = new Player();
@@ -36,7 +40,9 @@ public class Game extends ApplicationAdapter {
 	@Override
 	public void create() {
 		batch = new SpriteBatch();
+		hudBatch = new SpriteBatch();
 		cameraController.init();
+		hudController.init();
 		zombieSpawner.init();
 		Bullet.init();
 		player.init();
@@ -62,6 +68,7 @@ public class Game extends ApplicationAdapter {
 				zombies.get(i).update();
 			crosshairs.update();
 			zombieSpawner.update();
+			hudController.update();
 			// End game logic
 			cameraController.update();
 
@@ -79,6 +86,12 @@ public class Game extends ApplicationAdapter {
 			crosshairs.draw(batch);
 			// End sprite drawing
 			batch.end();
+
+			hudBatch.begin();
+			// Draw HUD here
+			hudController.draw(hudBatch);
+			// End HUD drawing
+			hudBatch.end();
 			break;
 
 		case PAUSED:
@@ -99,6 +112,12 @@ public class Game extends ApplicationAdapter {
 			crosshairs.draw(batch);
 			// End sprite drawing
 			batch.end();
+			
+			hudBatch.begin();
+			// Draw HUD here
+			hudController.draw(hudBatch);
+			// End HUD drawing
+			hudBatch.end();
 			break;
 
 		default:
@@ -109,6 +128,7 @@ public class Game extends ApplicationAdapter {
 	@Override
 	public void dispose() {
 		batch.dispose();
+		hudBatch.dispose();
 		cameraController.dispose();
 		Bullet.dispose();
 		Zombie.dispose();
@@ -126,6 +146,10 @@ public class Game extends ApplicationAdapter {
 
 	public CameraController getCameraController() {
 		return cameraController;
+	}
+
+	public HUDController getHUDController() {
+		return hudController;
 	}
 
 	public Player getPlayer() {
