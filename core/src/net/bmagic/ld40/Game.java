@@ -38,6 +38,7 @@ public class Game extends ApplicationAdapter {
 	private Player player;
 	private Crosshairs crosshairs;
 	private float elapsedGameoverTime;
+	private Texture logo;
 
 	private Texture lamp;
 
@@ -70,11 +71,13 @@ public class Game extends ApplicationAdapter {
 		Zombie.init();
 		crosshairs.init();
 
+		logo = new Texture(Gdx.files.internal("logo.png"));
+
 		lamp = new Texture(Gdx.files.internal("lamp.png"));
 
 		elapsedGameoverTime = 0;
 
-		state = GameState.RUNNING;
+		state = GameState.TITLE;
 	}
 
 	@Override
@@ -87,6 +90,38 @@ public class Game extends ApplicationAdapter {
 		switch (state) {
 
 		case TITLE:
+			if (Gdx.input.isTouched()) {
+				setState(GameState.RUNNING);
+			}
+
+			batch.begin();
+			batch.setProjectionMatrix(cameraController.getCamera().combined);
+			cameraController.draw(batch);
+			batch.end();
+
+			Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+			Gdx.gl.glEnable(GL20.GL_BLEND);
+			shapeRenderer.begin(ShapeType.Filled);
+			shapeRenderer.setColor(0, 0, 0, PAUSE_ALPHA);
+			shapeRenderer.rect(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+			shapeRenderer.end();
+			Gdx.gl.glDisable(GL20.GL_BLEND);
+
+			hudBatch.begin();
+			// Draw HUD here
+			hudBatch.draw(
+				logo,
+				Gdx.graphics.getWidth()/2 - logo.getWidth(),
+				Gdx.graphics.getHeight()/2 - logo.getHeight() + 100,
+				logo.getWidth() * 2,
+				logo.getHeight() * 2);
+
+			font.getRegion().getTexture().setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
+			font.getData().setScale(2f);
+			layout = new GlyphLayout(font, "Click anywhere to start");
+			font.draw(hudBatch, "Click anywhere to start", Gdx.graphics.getWidth() / 2 - layout.width / 2,
+					Gdx.graphics.getHeight() / 2 - layout.height / 2 - 100);
+			hudBatch.end();
 			break;
 
 		case RUNNING:
