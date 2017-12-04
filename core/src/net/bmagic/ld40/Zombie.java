@@ -94,6 +94,7 @@ public class Zombie {
         deathSound.play(DEATH_VOLUME);
         game.getAmmo().add(new Ammo(
             (int) (rect.x + rect.width/2), (int) (rect.y + rect.height/2)));
+        game.getHUDController().incrScore();
         game.getZombies().remove(this);
     }
 

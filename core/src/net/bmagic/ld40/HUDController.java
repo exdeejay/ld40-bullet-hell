@@ -18,24 +18,20 @@ public class HUDController {
     private BitmapFont font;
 
     // Private properties
-    private long startTime;
-    private long survivedTime;
-    private long survivedTimeMinutes;
-    private long survivedTimeSeconds;
+    private int survivedTimeMinutes;
+    private float survivedTimeSeconds;
+    private int score;
 
     public void init() {
         game = Game.getInstance();
-        font = new BitmapFont(
-            Gdx.files.internal("font.fnt"),
-            Gdx.files.internal("font.png"),
-            false);
-        startTime = TimeUtils.millis();
+        font = game.getFont();
+        survivedTimeSeconds = 0;
+        score = 0;
     }
 
     public void update() {
-        survivedTime = TimeUtils.millis() - startTime;
-        survivedTimeMinutes = survivedTime / (60 * 1000);
-        survivedTimeSeconds = (survivedTime % (60 * 1000)) / 1000;
+        survivedTimeSeconds += Gdx.graphics.getDeltaTime();
+        survivedTimeMinutes = (int) (survivedTimeSeconds / 60);
     }
 
     public void draw(SpriteBatch batch) {
@@ -46,15 +42,28 @@ public class HUDController {
             batch,
             "Bullets:" + game.getPlayer().getBullets(),
             10, Gdx.graphics.getHeight() - 10);
+        font.draw(batch, "Kills:" + score, 10, Gdx.graphics.getHeight() - 64);
         font.draw(
             batch,
             "Time: " + survivedTimeMinutes + ":"
-                + (survivedTimeSeconds < 10 ? "0" + survivedTimeSeconds : survivedTimeSeconds),
-            10, Gdx.graphics.getHeight() - 64);
+                + (survivedTimeSeconds < 10 ? "0" + (int) survivedTimeSeconds : (int) survivedTimeSeconds),
+            10, 48);
     }
 
     public void dispose() {
         font.dispose();
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    public void incrScore() {
+        score++;
     }
     
 }

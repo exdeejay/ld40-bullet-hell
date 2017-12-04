@@ -21,6 +21,7 @@ public class Player {
     public static final float SHOOT_VOLUME = 0.5f;
     public static final float DUD_VOLUME = 0.25f;
     public static final float PICKUP_VOLUME = 0.25f;    
+    public static final float DEATH_VOLUME = 0.5f;
     public static final float SHAKE_INTENSITY = 2f;
     public static final float SHAKE_DURATION = 0.1f;
     public static final float SPRITE_SCALE = 1.5f;
@@ -39,6 +40,7 @@ public class Player {
     private Sound shootSound;
     private Sound dudSound;
     private Sound pickupSound;
+    private Sound deathSound;
 
     // Private properties
     private Rectangle rect;
@@ -60,6 +62,7 @@ public class Player {
         shootSound = Gdx.audio.newSound(Gdx.files.internal("shoot.wav"));
         dudSound = Gdx.audio.newSound(Gdx.files.internal("dud.wav"));
         pickupSound = Gdx.audio.newSound(Gdx.files.internal("pickup.wav"));
+        deathSound = Gdx.audio.newSound(Gdx.files.internal("death.wav"));
         
         rect = new Rectangle(
             game.getCameraController().getRectangle().getWidth()/2
@@ -200,7 +203,7 @@ public class Player {
     }
 
     public void die() {
-        Gdx.app.log("GAMESTATE", "You lose!");
+        deathSound.play(DEATH_VOLUME);
         game.setState(GameState.GAMEOVER);
     }
 
