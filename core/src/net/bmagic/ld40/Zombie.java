@@ -14,10 +14,11 @@ public class Zombie {
 
     // Tweakable constants
     public static final int SPEED = 80;
+    public static final float SPRITE_SCALE = 1.5f;    
     public static final int HITBOX_OFFSET_X = 9;
     public static final int HITBOX_OFFSET_Y = 0;
     public static final int HITBOX_WIDTH = 12;
-    public static final int HITBOX_HEIGHT = 36;
+    public static final int HITBOX_HEIGHT = 32;
     // End tweakable constants
 
     // Cached instances
@@ -32,10 +33,10 @@ public class Zombie {
 
     public Zombie(int x, int y) {
         rect = new Rectangle(
-            x - texture.getWidth()/2 + HITBOX_OFFSET_X,
-            y - texture.getHeight()/2 + HITBOX_OFFSET_Y,
-            HITBOX_WIDTH,
-            HITBOX_HEIGHT);
+            x - anim.getKeyFrames()[0].getRegionWidth()/2 + HITBOX_OFFSET_X,
+            y - anim.getKeyFrames()[0].getRegionHeight()/2 + HITBOX_OFFSET_Y,
+            HITBOX_WIDTH * SPRITE_SCALE,
+            HITBOX_HEIGHT * SPRITE_SCALE);
         path = new Vector2();
         stateTime = 0;
     }
@@ -73,7 +74,7 @@ public class Zombie {
             rect.x - HITBOX_OFFSET_X, rect.y - HITBOX_OFFSET_Y,
             frame.getRegionWidth()/2, frame.getRegionHeight()/2,
             frame.getRegionWidth(), frame.getRegionHeight(),
-            1.5f * (path.x > 0 ? 1 : -1), 1.5f,
+            SPRITE_SCALE * (path.x > 0 ? 1 : -1), SPRITE_SCALE,
             0);
     }
 
