@@ -16,7 +16,8 @@
             "label": "runWeb",
             "type": "shell",
             "command": "gradlew.bat html:superDev",
-            "group": "build"
+            "group": "build",
+            "problemMatcher": []
         }
     ]
 }
