@@ -1,5 +1,7 @@
 package net.bmagic.ld40;
 
+import java.util.Random;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -25,10 +27,16 @@ public class CameraController {
     private Texture texture;
     private TextureRegion tile;
     private OrthographicCamera camera;
+    private Random random;
 
     // Private properties
     private Rectangle rect;
     private Vector3 playerCoords;
+    private float shakeElapsed;
+    private float shakeDuration;
+    private float shakeIntensity;
+    private float baseX;
+    private float baseY;
 
     public void init() {
         game = Game.getInstance();
@@ -42,9 +50,16 @@ public class CameraController {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, CAMERA_WIDTH, CAMERA_HEIGHT);
         camera.position.set(rect.getWidth()/2, rect.getHeight()/2, 0);
+        baseX = rect.getWidth()/2;
+        baseY = rect.getHeight()/2;
+
+        random = new Random();
 
         player = game.getPlayer();
         playerCoords = new Vector3();
+
+        shakeElapsed = 0;
+        shakeDuration = -1;
     }
 
     public void update() {
@@ -55,6 +70,10 @@ public class CameraController {
         Vector3 projected = projectToCamera(playerCoords);
         
         float d = game.getPlayer().getSpeed() * Gdx.graphics.getDeltaTime();
+
+        camera.position.x = baseX;
+        camera.position.y = baseY;
+
         if (projected.x > CAMERA_WIDTH - LIMIT)
             camera.position.x += d;
         if (projected.x < LIMIT)
@@ -72,6 +91,11 @@ public class CameraController {
             camera.position.y = CAMERA_HEIGHT/2;
         if (camera.position.y + CAMERA_HEIGHT/2 > rect.height)
             camera.position.y = rect.height - CAMERA_HEIGHT/2;
+
+        baseX = camera.position.x;
+        baseY = camera.position.y;
+
+        updateShake();
 
         // Don't forget to update the camera
         camera.update();
@@ -98,6 +122,27 @@ public class CameraController {
         projected.x = worldCoords.x - (camera.position.x - CAMERA_WIDTH/2);
         projected.y = worldCoords.y - (camera.position.y - CAMERA_HEIGHT/2);
         return projected;
+    }
+
+    public void shake(float intensity, float duration) {
+        shakeElapsed = 0;
+        shakeIntensity = intensity;
+        shakeDuration = duration;
+    }
+
+    private void updateShake() {
+        // Only shake when required.
+        if (shakeElapsed < shakeDuration) {
+        
+            // Calculate the amount of shake based on how long it has been shaking already
+            float currentPower = shakeIntensity * ((shakeDuration - shakeElapsed) / shakeDuration);
+            float x = (random.nextFloat() - 0.5f) * currentPower;
+            float y = (random.nextFloat() - 0.5f) * currentPower;
+            camera.translate(-x, -y);
+        
+            // Increase the elapsed time by the delta provided.
+            shakeElapsed += Gdx.graphics.getDeltaTime();
+        }
     }
 
 }

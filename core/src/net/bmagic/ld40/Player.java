@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
@@ -17,6 +18,11 @@ public class Player {
     
     // Tweakable constants
     public static final int BASE_SPEED = 200;
+    public static final float SHOOT_VOLUME = 0.5f;
+    public static final float DUD_VOLUME = 0.25f;
+    public static final float PICKUP_VOLUME = 0.25f;    
+    public static final float SHAKE_INTENSITY = 2f;
+    public static final float SHAKE_DURATION = 0.1f;
     public static final float SPRITE_SCALE = 1.5f;
     public static final int HITBOX_OFFSET_X = 9;
     public static final int HITBOX_OFFSET_Y = 0;
@@ -30,6 +36,9 @@ public class Player {
     private TextureRegion idleFrame;
     private TextureRegion arm;
     private Animation<TextureRegion> anim;
+    private Sound shootSound;
+    private Sound dudSound;
+    private Sound pickupSound;
 
     // Private properties
     private Rectangle rect;
@@ -38,7 +47,6 @@ public class Player {
     private Vector3 screenCoords;
     private float armRot;
     private boolean moving;
-    private boolean right;
     private float d;
 
     public void init() {
@@ -49,6 +57,9 @@ public class Player {
         arm = frames[4];
         anim = new Animation<TextureRegion>(0.15f, Arrays.copyOfRange(frames, 1, 3));
         anim.setPlayMode(PlayMode.LOOP_PINGPONG);
+        shootSound = Gdx.audio.newSound(Gdx.files.internal("shoot.wav"));
+        dudSound = Gdx.audio.newSound(Gdx.files.internal("dud.wav"));
+        pickupSound = Gdx.audio.newSound(Gdx.files.internal("pickup.wav"));
         
         rect = new Rectangle(
             game.getCameraController().getRectangle().getWidth()/2
@@ -62,7 +73,6 @@ public class Player {
         stateTime = 0;
         screenCoords = new Vector3();
         moving = false;
-        right = true;
     }
 
     public void update() {
@@ -78,7 +88,6 @@ public class Player {
         if (Gdx.input.isKeyPressed(Keys.A)) {
             rect.x -= d;
             moving = true;
-            right = false;
         }
         if (Gdx.input.isKeyPressed(Keys.S)) {
             rect.y -= d;
@@ -87,7 +96,6 @@ public class Player {
         if (Gdx.input.isKeyPressed(Keys.D)) {
             rect.x += d;
             moving = true;
-            right = true;
         }
 
         // Limits movement to background texture
@@ -111,6 +119,7 @@ public class Player {
             if (rect.overlaps(ammo.get(i).getRectangle())) {
                 bullets += Ammo.CARTRIDGE_SIZE;
                 ammo.remove(i);
+                pickupSound.play(PICKUP_VOLUME);
             }
 
         screenCoords.set(
@@ -127,14 +136,6 @@ public class Player {
     }
 
     public void draw(SpriteBatch batch) {
-        batch.draw(
-            moving ? anim.getKeyFrame(stateTime, true) : idleFrame,
-            rect.x - HITBOX_OFFSET_X, rect.y - HITBOX_OFFSET_Y,
-            idleFrame.getRegionWidth()/2, idleFrame.getRegionHeight()/2,
-            idleFrame.getRegionWidth(), idleFrame.getRegionHeight(),
-            SPRITE_SCALE * (right ? 1 : -1), SPRITE_SCALE,
-            0);
-        
         float adjustedArmRot;
         if (Math.toDegrees(armRot) > 90)
             adjustedArmRot = (float) Math.toDegrees(armRot) - 180;
@@ -142,6 +143,16 @@ public class Player {
             adjustedArmRot = (float) Math.toDegrees(armRot) + 180;
         else
             adjustedArmRot = (float) Math.toDegrees(armRot);
+
+        batch.draw(
+            moving ? anim.getKeyFrame(stateTime, true) : idleFrame,
+            rect.x - HITBOX_OFFSET_X, rect.y - HITBOX_OFFSET_Y,
+            idleFrame.getRegionWidth()/2, idleFrame.getRegionHeight()/2,
+            idleFrame.getRegionWidth(), idleFrame.getRegionHeight(),
+            SPRITE_SCALE
+                * (Math.toDegrees(armRot) > 90 || Math.toDegrees(armRot) < -90 ? -1 : 1),
+            SPRITE_SCALE,
+            0);
         batch.draw(
             arm,
             rect.x - HITBOX_OFFSET_X, rect.y - HITBOX_OFFSET_Y,
@@ -181,6 +192,10 @@ public class Player {
                     rect.x + rect.width/2,
                     rect.y + rect.height/2,
                     angle));
+            shootSound.play(SHOOT_VOLUME);
+            game.getCameraController().shake(SHAKE_INTENSITY, SHAKE_DURATION);
+        } else {
+            dudSound.play(DUD_VOLUME);
         }
     }
 

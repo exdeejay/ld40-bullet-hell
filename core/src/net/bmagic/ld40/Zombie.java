@@ -3,6 +3,7 @@ package net.bmagic.ld40;
 import java.util.List;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -14,6 +15,7 @@ public class Zombie {
 
     // Tweakable constants
     public static final int SPEED = 80;
+    public static final float DEATH_VOLUME = 0.25f;
     public static final float SPRITE_SCALE = 1.5f;    
     public static final int HITBOX_OFFSET_X = 9;
     public static final int HITBOX_OFFSET_Y = 0;
@@ -25,6 +27,7 @@ public class Zombie {
     private static Game game;
     private static Texture texture;
     private static Animation<TextureRegion> anim;
+    private static Sound deathSound;
     
     // Private properties
     private Rectangle rect;
@@ -46,6 +49,7 @@ public class Zombie {
         texture = new Texture(Gdx.files.internal("zombie.png"));
         TextureRegion[][] frames = TextureRegion.split(texture, 32, 32);
         anim = new Animation<TextureRegion>(0.25f, frames[0]);
+        deathSound = Gdx.audio.newSound(Gdx.files.internal("zombie_death.wav"));
     }
 
     public void update() {
@@ -87,6 +91,7 @@ public class Zombie {
     }
 
     public void die() {
+        deathSound.play(DEATH_VOLUME);
         game.getAmmo().add(new Ammo(
             (int) (rect.x + rect.width/2), (int) (rect.y + rect.height/2)));
         game.getZombies().remove(this);
