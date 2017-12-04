@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.utils.TimeUtils;
 
 public class HUDController {
 
@@ -16,12 +17,16 @@ public class HUDController {
     private Game game;
     private BitmapFont font;
 
+    // Private properties
+    private long startTime;
+
     public void init() {
         game = Game.getInstance();
         font = new BitmapFont(
             Gdx.files.internal("font.fnt"),
             Gdx.files.internal("font.png"),
             false);
+        startTime = TimeUtils.millis();
     }
 
     public void update() {
@@ -29,10 +34,21 @@ public class HUDController {
     }
 
     public void draw(SpriteBatch batch) {
+        long survivedTime = TimeUtils.millis() - startTime;
+        long survivedTimeMinutes = survivedTime / (60 * 1000);
+        long survivedTimeSeconds = (survivedTime % (60 * 1000)) / 1000;
+
         font.getRegion().getTexture()
             .setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
         font.getData().setScale(4);
-        font.draw(batch, "Bullets:" + game.getPlayer().getBullets(), 10, Gdx.graphics.getHeight() - 10);
+        font.draw(
+            batch,
+            "Bullets:" + game.getPlayer().getBullets(),
+            10, Gdx.graphics.getHeight() - 10);
+        font.draw(
+            batch,
+            String.format("Time: %d:%02d", survivedTimeMinutes, survivedTimeSeconds),
+            10, Gdx.graphics.getHeight() - 64);
     }
 
     public void dispose() {

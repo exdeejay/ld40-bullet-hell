@@ -110,11 +110,13 @@ public class Game extends ApplicationAdapter {
 			batch.setProjectionMatrix(cameraController.getCamera().combined);
 			// Draw sprites in here
 			cameraController.draw(batch);
+			for (Ammo a : ammo)
+				a.draw(batch);
 			for (Bullet b : bullets)
 				b.draw(batch);
+			player.draw(batch);
 			for (Zombie z : zombies)
 				z.draw(batch);
-			player.draw(batch);
 			crosshairs.draw(batch);
 			// End sprite drawing
 			batch.end();

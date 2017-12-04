@@ -36,7 +36,7 @@ public class Player {
     }
 
     public void update() {
-        float d = BASE_SPEED * Gdx.graphics.getDeltaTime();
+        float d = getSpeed() * Gdx.graphics.getDeltaTime();
         Rectangle backRect = game.getCameraController().getRectangle();
 
         // Key input
@@ -91,6 +91,10 @@ public class Player {
 
     public void setBullets(int bullets) {
         this.bullets = bullets;
+    }
+
+    public int getSpeed() {
+        return bullets > 10 ? BASE_SPEED * 10 / bullets : BASE_SPEED;
     }
 
     public void shoot(float angle) {
