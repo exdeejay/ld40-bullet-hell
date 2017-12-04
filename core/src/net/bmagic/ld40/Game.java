@@ -7,6 +7,7 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class Game extends ApplicationAdapter {
@@ -25,6 +26,8 @@ public class Game extends ApplicationAdapter {
 	private Player player;
 	private Crosshairs crosshairs;
 
+	private Texture lamp;
+
 	public Game() {
 		instance = this;
 
@@ -36,8 +39,9 @@ public class Game extends ApplicationAdapter {
 		player = new Player();
 		zombies = new ArrayList<Zombie>();
 		crosshairs = new Crosshairs();
-	}
 
+	}
+	
 	@Override
 	public void create() {
 		batch = new SpriteBatch();
@@ -50,7 +54,9 @@ public class Game extends ApplicationAdapter {
 		player.init();
 		Zombie.init();
 		crosshairs.init();
-
+		
+		lamp = new Texture(Gdx.files.internal("lamp.png"));
+		
 		state = GameState.RUNNING;
 	}
 
@@ -82,6 +88,7 @@ public class Game extends ApplicationAdapter {
 			batch.setProjectionMatrix(cameraController.getCamera().combined);
 			// Draw sprites in here
 			cameraController.draw(batch);
+			batch.draw(lamp, 0, 0);
 			for (int i = 0; i < ammo.size(); i++)
 				ammo.get(i).draw(batch);
 			for (int i = 0; i < bullets.size(); i++)
@@ -142,6 +149,8 @@ public class Game extends ApplicationAdapter {
 		Zombie.dispose();
 		player.dispose();
 		crosshairs.dispose();
+
+		lamp.dispose();
 	}
 
 	public static Game getInstance() {
