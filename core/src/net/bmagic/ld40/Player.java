@@ -7,10 +7,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector3;
 
 public class Player {
     
@@ -27,12 +28,15 @@ public class Player {
     private Game game;
     private Texture texture;
     private TextureRegion idleFrame;
+    private TextureRegion arm;
     private Animation<TextureRegion> anim;
 
     // Private properties
     private Rectangle rect;
     private int bullets;
     private float stateTime;
+    private Vector3 screenCoords;
+    private float armRot;
     private boolean moving;
     private boolean right;
     private float d;
@@ -42,6 +46,7 @@ public class Player {
         texture = new Texture(Gdx.files.internal("player.png"));
         TextureRegion[] frames = TextureRegion.split(texture, 32, 32)[0];
         idleFrame = frames[0];
+        arm = frames[4];
         anim = new Animation<TextureRegion>(0.15f, Arrays.copyOfRange(frames, 1, 3));
         anim.setPlayMode(PlayMode.LOOP_PINGPONG);
         
@@ -55,6 +60,7 @@ public class Player {
 
         bullets = 6;
         stateTime = 0;
+        screenCoords = new Vector3();
         moving = false;
         right = true;
     }
@@ -107,6 +113,16 @@ public class Player {
                 ammo.remove(i);
             }
 
+        screenCoords.set(
+            Gdx.input.getX(),
+            Gdx.input.getY(),
+            0);
+        Vector3 worldCoords = game.getCameraController().getCamera().unproject(screenCoords);
+        float x = worldCoords.x;
+        float y = worldCoords.y;
+        armRot = (float) Math.atan2(
+            y - rect.y - HITBOX_OFFSET_Y + idleFrame.getRegionHeight()/2,
+            x - rect.x - HITBOX_OFFSET_X + idleFrame.getRegionWidth()/2);
         stateTime += Gdx.graphics.getDeltaTime();
     }
 
@@ -118,6 +134,23 @@ public class Player {
             idleFrame.getRegionWidth(), idleFrame.getRegionHeight(),
             SPRITE_SCALE * (right ? 1 : -1), SPRITE_SCALE,
             0);
+        
+        float adjustedArmRot;
+        if (Math.toDegrees(armRot) > 90)
+            adjustedArmRot = (float) Math.toDegrees(armRot) - 180;
+        else if (Math.toDegrees(armRot) < -90)
+            adjustedArmRot = (float) Math.toDegrees(armRot) + 180;
+        else
+            adjustedArmRot = (float) Math.toDegrees(armRot);
+        batch.draw(
+            arm,
+            rect.x - HITBOX_OFFSET_X, rect.y - HITBOX_OFFSET_Y,
+            idleFrame.getRegionWidth()/2, idleFrame.getRegionHeight()/2,
+            idleFrame.getRegionWidth(), idleFrame.getRegionHeight(),
+            SPRITE_SCALE 
+                * (Math.toDegrees(armRot) > 90 || Math.toDegrees(armRot) < -90 ? -1 : 1),
+            SPRITE_SCALE,
+            adjustedArmRot);
     }
 
     public void dispose() {
