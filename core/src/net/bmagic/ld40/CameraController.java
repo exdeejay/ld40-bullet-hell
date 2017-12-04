@@ -14,8 +14,8 @@ public class CameraController {
     // Tweakable constants
     public static final int WORLD_WIDTH = 1024;
     public static final int WORLD_HEIGHT = 1024;    
-    public static final int CAMERA_WIDTH = 800;
-    public static final int CAMERA_HEIGHT = 640;
+    public static final int CAMERA_WIDTH = 600;
+    public static final int CAMERA_HEIGHT = 360;
     public static final int LIMIT = 200;
     // End tweakable constants
 

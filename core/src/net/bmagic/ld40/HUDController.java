@@ -19,6 +19,9 @@ public class HUDController {
 
     // Private properties
     private long startTime;
+    private long survivedTime;
+    private long survivedTimeMinutes;
+    private long survivedTimeSeconds;
 
     public void init() {
         game = Game.getInstance();
@@ -30,14 +33,12 @@ public class HUDController {
     }
 
     public void update() {
-
+        survivedTime = TimeUtils.millis() - startTime;
+        survivedTimeMinutes = survivedTime / (60 * 1000);
+        survivedTimeSeconds = (survivedTime % (60 * 1000)) / 1000;
     }
 
     public void draw(SpriteBatch batch) {
-        long survivedTime = TimeUtils.millis() - startTime;
-        long survivedTimeMinutes = survivedTime / (60 * 1000);
-        long survivedTimeSeconds = (survivedTime % (60 * 1000)) / 1000;
-
         font.getRegion().getTexture()
             .setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
         font.getData().setScale(4);
