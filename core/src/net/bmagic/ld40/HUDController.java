@@ -47,7 +47,8 @@ public class HUDController {
             10, Gdx.graphics.getHeight() - 10);
         font.draw(
             batch,
-            String.format("Time: %d:%02d", survivedTimeMinutes, survivedTimeSeconds),
+            "Time: " + survivedTimeMinutes + ":"
+                + (survivedTimeSeconds < 10 ? "0" + survivedTimeSeconds : survivedTimeSeconds),
             10, Gdx.graphics.getHeight() - 64);
     }
 
