@@ -12,8 +12,8 @@ public class HtmlLauncher extends GwtApplication {
         @Override
         public GwtApplicationConfiguration getConfig() {
                 return new GwtApplicationConfiguration(
-                        (int) (CameraController.CAMERA_WIDTH * 1.25),
-                        (int) (CameraController.CAMERA_HEIGHT * 1.25));
+                        (int) (CameraController.CAMERA_WIDTH * 2),
+                        (int) (CameraController.CAMERA_HEIGHT * 2));
         }
 
         @Override
