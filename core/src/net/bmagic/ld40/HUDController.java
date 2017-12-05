@@ -1,29 +1,37 @@
 package net.bmagic.ld40;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector3;
 
 public class HUDController {
-
-    // Tweakable constants
-    public static final int SCORE_OFFSET_X = 20;
-    public static final int SCORE_OFFSET_Y = 20;
-    // End tweakable constants
-
+    
     // Cached instances
     private Game game;
+    private OrthographicCamera camera;
     private BitmapFont font;
 
     // Private properties
+    private Vector3 bulletsScreenCoords;
+    private Vector3 bulletsWorldCoords;
+    private Vector3 scoreScreenCoords;
+    private Vector3 scoreWorldCoords;
+    private Vector3 timeScreenCoords;
+    private Vector3 timeWorldCoords;
     private int survivedTimeMinutes;
     private float survivedTimeSeconds;
     private int score;
 
     public void init() {
         game = Game.getInstance();
+        camera = game.getCameraController().getCamera();
         font = game.getFont();
+        bulletsScreenCoords = new Vector3();
+        scoreScreenCoords = new Vector3();
+        timeScreenCoords = new Vector3();
         survivedTimeSeconds = 0;
         score = 0;
     }
@@ -36,17 +44,28 @@ public class HUDController {
     public void draw(SpriteBatch batch) {
         font.getRegion().getTexture()
             .setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
-        font.getData().setScale(4);
+        font.getData().setScale(2);
+        bulletsScreenCoords.set(10, camera.viewportHeight - 10, 0);
+        bulletsWorldCoords = game.getCameraController().unprojectFromCamera(bulletsScreenCoords);
         font.draw(
             batch,
             "Bullets:" + game.getPlayer().getBullets(),
-            10, Gdx.graphics.getHeight() - 10);
-        font.draw(batch, "Kills:" + score, 10, Gdx.graphics.getHeight() - 64);
+            bulletsWorldCoords.x, bulletsWorldCoords.y);
+            
+        scoreScreenCoords.set(10, camera.viewportHeight - 40, 0);
+        scoreWorldCoords = game.getCameraController().unprojectFromCamera(scoreScreenCoords);
+        font.draw(
+            batch,
+            "Kills:" + score,
+            scoreWorldCoords.x, scoreWorldCoords.y);
+
+        timeScreenCoords.set(10, 32, 0);
+        timeWorldCoords = game.getCameraController().unprojectFromCamera(timeScreenCoords);
         font.draw(
             batch,
             "Time: " + survivedTimeMinutes + ":"
                 + (survivedTimeSeconds < 10 ? "0" + (int) survivedTimeSeconds : (int) survivedTimeSeconds),
-            10, 48);
+            timeWorldCoords.x, timeWorldCoords.y);
     }
 
     public void dispose() {

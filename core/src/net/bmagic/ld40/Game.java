@@ -14,6 +14,7 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.Vector3;
 
 public class Game extends ApplicationAdapter {
 
@@ -27,7 +28,7 @@ public class Game extends ApplicationAdapter {
 	private BitmapFont font;
 	private GlyphLayout layout;
 	private SpriteBatch batch;
-	private SpriteBatch hudBatch;
+	private SpriteBatch overlayBatch;
 	private ShapeRenderer shapeRenderer;
 	private CameraController cameraController;
 	private HUDController hudController;
@@ -39,6 +40,7 @@ public class Game extends ApplicationAdapter {
 	private Crosshairs crosshairs;
 	private float elapsedGameoverTime;
 	private Texture logo;
+	private Vector3 worldCoords;
 
 	private Texture lamp;
 
@@ -60,7 +62,7 @@ public class Game extends ApplicationAdapter {
 
 		font = new BitmapFont(Gdx.files.internal("font.fnt"), Gdx.files.internal("font.png"), false);
 		batch = new SpriteBatch();
-		hudBatch = new SpriteBatch();
+		overlayBatch = new SpriteBatch();
 		shapeRenderer = new ShapeRenderer();
 		cameraController.init();
 		hudController.init();
@@ -107,21 +109,31 @@ public class Game extends ApplicationAdapter {
 			shapeRenderer.end();
 			Gdx.gl.glDisable(GL20.GL_BLEND);
 
-			hudBatch.begin();
-			// Draw HUD here
-			hudBatch.draw(
+			overlayBatch.begin();
+			overlayBatch.setProjectionMatrix(cameraController.getCamera().combined);
+			worldCoords = cameraController.unprojectFromCamera(
+				new Vector3(
+					cameraController.getCamera().viewportWidth/2 - logo.getWidth()/2,
+					cameraController.getCamera().viewportHeight/2 - logo.getHeight()/2 + 100,
+					0));
+			overlayBatch.draw(
 				logo,
-				Gdx.graphics.getWidth()/2 - logo.getWidth(),
-				Gdx.graphics.getHeight()/2 - logo.getHeight() + 100,
-				logo.getWidth() * 2,
-				logo.getHeight() * 2);
-
+				worldCoords.x, worldCoords.y,
+				logo.getWidth(),
+				logo.getHeight());
 			font.getRegion().getTexture().setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
-			font.getData().setScale(2f);
+			font.getData().setScale(1);
 			layout = new GlyphLayout(font, "Click anywhere to start");
-			font.draw(hudBatch, "Click anywhere to start", Gdx.graphics.getWidth() / 2 - layout.width / 2,
-					Gdx.graphics.getHeight() / 2 - layout.height / 2 - 100);
-			hudBatch.end();
+			worldCoords = cameraController.unprojectFromCamera(
+				new Vector3(
+					cameraController.getCamera().viewportWidth/2 - layout.width/2,
+					cameraController.getCamera().viewportHeight/2 - layout.height/2 - 100,
+					0));
+			font.draw(
+				overlayBatch,
+				"Click anywhere to start",
+				worldCoords.x, worldCoords.y);
+			overlayBatch.end();
 			break;
 
 		case RUNNING:
@@ -158,14 +170,9 @@ public class Game extends ApplicationAdapter {
 			for (int i = 0; i < zombies.size(); i++)
 				zombies.get(i).draw(batch);
 			crosshairs.draw(batch);
+			hudController.draw(batch);
 			// End sprite drawing
 			batch.end();
-
-			hudBatch.begin();
-			// Draw HUD here
-			hudController.draw(hudBatch);
-			// End HUD drawing
-			hudBatch.end();
 			break;
 
 		case PAUSED:
@@ -186,6 +193,7 @@ public class Game extends ApplicationAdapter {
 			player.draw(batch);
 			for (Zombie z : zombies)
 				z.draw(batch);
+			hudController.draw(batch);
 			// End sprite drawing
 			batch.end();
 
@@ -197,21 +205,35 @@ public class Game extends ApplicationAdapter {
 			shapeRenderer.end();
 			Gdx.gl.glDisable(GL20.GL_BLEND);
 
-			hudBatch.begin();
+			overlayBatch.begin();
+			overlayBatch.setProjectionMatrix(cameraController.getCamera().combined);
 			// Draw HUD here
-			hudController.draw(hudBatch);
 			font.getRegion().getTexture().setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
-			font.getData().setScale(4f);
+			font.getData().setScale(2);
 			layout = new GlyphLayout(font, "Paused");
-			font.draw(hudBatch, "Paused", Gdx.graphics.getWidth() / 2 - layout.width / 2,
-					Gdx.graphics.getHeight() / 2 - layout.height / 2 + 100);
+			worldCoords = cameraController.unprojectFromCamera(
+				new Vector3(
+					cameraController.getCamera().viewportWidth/2 - layout.width/2,
+					cameraController.getCamera().viewportHeight/2 - layout.height/2 + 100,
+					0));
+			font.draw(
+				overlayBatch,
+				"Paused",
+				worldCoords.x, worldCoords.y);
 
-			font.getData().setScale(2f);
+			font.getData().setScale(1);
+			worldCoords = cameraController.unprojectFromCamera(
+				new Vector3(
+					cameraController.getCamera().viewportWidth/2 - layout.width/2 - 20,
+					cameraController.getCamera().viewportHeight/2 - layout.height/2 - 100,
+					0));
 			layout = new GlyphLayout(font, "Press P to resume");
-			font.draw(hudBatch, "Press P to resume", Gdx.graphics.getWidth() / 2 - layout.width / 2,
-					Gdx.graphics.getHeight() / 2 - layout.height / 2 - 100);
+			font.draw(
+				overlayBatch,
+				"Press P to resume",
+				worldCoords.x, worldCoords.y);
 			// End HUD drawing
-			hudBatch.end();
+			overlayBatch.end();
 			break;
 
 		case GAMEOVER:
@@ -234,6 +256,7 @@ public class Game extends ApplicationAdapter {
 			player.draw(batch);
 			for (Zombie z : zombies)
 				z.draw(batch);
+			hudController.draw(batch);
 			// End sprite drawing
 			batch.end();
 
@@ -245,20 +268,35 @@ public class Game extends ApplicationAdapter {
 			shapeRenderer.end();
 			Gdx.gl.glDisable(GL20.GL_BLEND);
 
-			hudBatch.begin();
+			overlayBatch.begin();
+			overlayBatch.setProjectionMatrix(cameraController.getCamera().combined);
 			// Draw HUD here
 			font.getRegion().getTexture().setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
-			font.getData().setScale(4f);
-			layout = new GlyphLayout(font, "You lose!");
-			font.draw(hudBatch, "You lose!", Gdx.graphics.getWidth() / 2 - layout.width / 2,
-					Gdx.graphics.getHeight() / 2 - layout.height / 2 + 100);
+			font.getData().setScale(2);
+			layout = new GlyphLayout(font, "You died!");
+			worldCoords = cameraController.unprojectFromCamera(
+				new Vector3(
+					cameraController.getCamera().viewportWidth/2 - layout.width/2 - 10,
+					cameraController.getCamera().viewportHeight/2 - layout.height/2 + 100,
+					0));
+			font.draw(
+				overlayBatch,
+				"You died!",
+				worldCoords.x, worldCoords.y);
 
-			font.getData().setScale(2f);
+			font.getData().setScale(1);
+			worldCoords = cameraController.unprojectFromCamera(
+				new Vector3(
+					cameraController.getCamera().viewportWidth/2 - layout.width/2 - 35,
+					cameraController.getCamera().viewportHeight/2 - layout.height/2 - 100,
+					0));
 			layout = new GlyphLayout(font, "Click anywhere to restart");
-			font.draw(hudBatch, "Click anywhere to restart", Gdx.graphics.getWidth() / 2 - layout.width / 2,
-					Gdx.graphics.getHeight() / 2 - layout.height / 2 - 100);
+			font.draw(
+				overlayBatch,
+				"Click anywhere to restart",
+				worldCoords.x, worldCoords.y);
 			// End HUD drawing
-			hudBatch.end();
+			overlayBatch.end();
 			break;
 
 		default:
@@ -269,7 +307,7 @@ public class Game extends ApplicationAdapter {
 	@Override
 	public void dispose() {
 		batch.dispose();
-		hudBatch.dispose();
+		overlayBatch.dispose();
 		cameraController.dispose();
 		Bullet.dispose();
 		Zombie.dispose();

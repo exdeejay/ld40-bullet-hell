@@ -60,6 +60,8 @@ public class CameraController {
 
         shakeElapsed = 0;
         shakeDuration = -1;
+        
+        camera.update();
     }
 
     public void update() {
@@ -122,6 +124,13 @@ public class CameraController {
         projected.x = worldCoords.x - (camera.position.x - CAMERA_WIDTH/2);
         projected.y = worldCoords.y - (camera.position.y - CAMERA_HEIGHT/2);
         return projected;
+    }
+
+    public Vector3 unprojectFromCamera(Vector3 screenCoords) {
+        Vector3 unprojected = new Vector3();
+        unprojected.x = screenCoords.x + (camera.position.x - CAMERA_WIDTH/2);
+        unprojected.y = screenCoords.y + (camera.position.y - CAMERA_HEIGHT/2);
+        return unprojected;
     }
 
     public void shake(float intensity, float duration) {
