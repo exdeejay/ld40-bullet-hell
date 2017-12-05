@@ -64,7 +64,7 @@ public class HUDController {
         font.draw(
             batch,
             "Time: " + survivedTimeMinutes + ":"
-                + (survivedTimeSeconds < 10 ? "0" + (int) survivedTimeSeconds : (int) survivedTimeSeconds),
+                + (survivedTimeSeconds % 60 < 10 ? "0" + (int) survivedTimeSeconds % 60 : (int) survivedTimeSeconds % 60),
             timeWorldCoords.x, timeWorldCoords.y);
     }
 
